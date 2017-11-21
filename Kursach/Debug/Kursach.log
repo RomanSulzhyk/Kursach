@@ -1,2 +1,10 @@
-﻿  Kursach.vcxproj -> C:\Users\Роман\Documents\Visual Studio 2015\Projects\Kursach\Debug\Kursach.exe
-  Kursach.vcxproj -> C:\Users\Роман\Documents\Visual Studio 2015\Projects\Kursach\Debug\Kursach.pdb (Partial PDB)
+﻿  main.cpp
+c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(33): warning C4305: '=': truncation from 'double' to 'float'
+c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(41): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(69): warning C4244: 'initializing': conversion from 'sf::Int64' to 'float', possible loss of data
+c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(80): warning C4305: '=': truncation from 'double' to 'float'
+c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(82): warning C4305: '=': truncation from 'double' to 'float'
+c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(84): warning C4305: '=': truncation from 'double' to 'float'
+c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(86): warning C4305: '=': truncation from 'double' to 'float'
+  Kursach.vcxproj -> C:\Users\Роман\documents\visual studio 2015\Projects\Kursach\Debug\Kursach.exe
+  Kursach.vcxproj -> C:\Users\Роман\documents\visual studio 2015\Projects\Kursach\Debug\Kursach.pdb (Partial PDB)
