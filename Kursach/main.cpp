@@ -1,9 +1,11 @@
-#include <SFML/Graphics.hpp>
+п»ї#include <SFML/Graphics.hpp>
+#include <list>
 
 using namespace sf;
 
 const int H = 9;
 const int W = 30;
+float DEGTORAD = 0.017453f;
 
 int CW = 0;
 
@@ -22,13 +24,13 @@ String Level1[H] = {
 
 class PLAYER {
 public:
-	float dx, dy;		//координати зміщення
-	FloatRect rect;		//Збереження інформації про спрайт
-	Sprite sprite;		//Сам персонаж поточного зображення
-	int life;			//кількість життів
-	float currentFrame;	//поточний кадр анімації
+	float dx, dy;		//СЃРєРѕСЂРѕСЃС‚СЊ
+	FloatRect rect;		//Р·Р°РіСЂСѓР·РєР° С‚РµРєСЃС‚СѓСЂРё РёРіСЂРѕРєР° (РєРѕРѕСЂРґРёРЅР°С‚)
+	Sprite sprite;		//Р·Р°РіСЂСѓР·РєР° СЃРїСЂР°Р№С‚Р° РёРіСЂРѕРєР°
+	int life;			//Р¶РёРІРёР№ С‡Рё РЅС–
+	float currentFrame;	//РїРѕС‚РѕС‡РЅРёР№ РєР°РґСЂ РёРіСЂРѕРєР°
 
-	//Конструкторр класа
+						//РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ
 	PLAYER(Texture &image)
 	{
 		sprite.setTexture(image);
@@ -39,21 +41,21 @@ public:
 		rect.top = 270;
 	}
 	void update(float time)
-	{	
+	{
 		rect.left += dx * time;
 		Collision(0);
 		rect.top += dy*time;
 		Collision(1);
 
-		currentFrame += 0.0005*time;
+		currentFrame += 0.01*time;
 		if (currentFrame > 3) currentFrame -= 3;
-		//подгрузка анимации, координати задаються Верхній лівий кут + ширина, висота персонажа.
-			if (dx>0) sprite.setTextureRect(IntRect(48 * int(currentFrame), 96, 48, 48));
-			if (dx<0) sprite.setTextureRect(IntRect(48 * int(currentFrame), 48, 48, 48));
-			if (dy>0) sprite.setTextureRect(IntRect(48 * int(currentFrame), 0, 48, 48));
-			if (dy<0) sprite.setTextureRect(IntRect(48 * int(currentFrame), 144, 48, 48));
-	
-			sprite.setPosition(rect.left, rect.top);
+		//СѓСЃС‚Р°РЅРѕРІРєР° Р°РЅРёРјР°С†С–С—
+		if (dx>0) sprite.setTextureRect(IntRect(48 * int(currentFrame), 96, 48, 48));
+		if (dx<0) sprite.setTextureRect(IntRect(48 * int(currentFrame), 48, 48, 48));
+		if (dy>0) sprite.setTextureRect(IntRect(48 * int(currentFrame), 0, 48, 48));
+		if (dy<0) sprite.setTextureRect(IntRect(48 * int(currentFrame), 144, 48, 48));
+
+		sprite.setPosition(rect.left, rect.top);
 		dx = 0;
 		dy = 0;
 	}
@@ -61,23 +63,23 @@ public:
 	void Collision(int dir)
 	{
 		for (int i = rect.top / 64; i<(rect.top + rect.height) / 64; i++)
-			for (int j = rect.left / 64;  j<(rect.left + rect.width) / 64; j++)
+			for (int j = rect.left / 64; j<(rect.left + rect.width) / 64; j++)
 			{
 				if (Level1[i][j] == 'Z')
 				{
 					if ((dx>0) && (dir == 0)) rect.left = j * 64 - rect.width;
 					if ((dx<0) && (dir == 0)) rect.left = j * 64 + 64;
 					if ((dy>0) && (dir == 1)) rect.top = i * 64 - rect.height;
-					if ((dy<0) && (dir == 1)) rect.top = i * 64 + 64; 
+					if ((dy<0) && (dir == 1)) rect.top = i * 64 + 64;
 				}
 
 				if (Level1[i][j] == 'e')
 				{
-					Level1[i][j] = ' '; 
+					Level1[i][j] = ' ';
 				}
 
 
-				//проверка на дверь
+				//РїРµСЂРµС…РѕРґ РјС–Р¶ СѓСЂРѕРІРЅСЏРјРё
 				if (Level1[i][j] == 'o')
 				{
 
@@ -95,76 +97,180 @@ public:
 
 };
 
+class Animation
+{
+public:
+	float Frame, speed;
+	Sprite sprite;
+	std::vector<IntRect> frames;
+
+	Animation() {}
+	Animation(Texture &t, int x, int y, int w, int h, int count, float Speed)
+	{
+		Frame = 0;
+		speed = Speed;
+
+		for (int i = 0; i < count; i++)
+			frames.push_back(IntRect(x + i*w, y, w, h));
+		sprite.setTexture(t);
+		sprite.setOrigin(w / 2, h / 2);
+		sprite.setTextureRect(frames[0]);
+
+	}
+	void update()
+	{
+		Frame += 0.01*speed;
+		int n = frames.size();
+		if (Frame >= n) Frame -= n;
+		if (n > 0) sprite.setTextureRect(frames[int(Frame)]);
+	}
+};
+
+class Entity
+{
+public:
+	float x, y, dx, dy, R, angle;
+	bool life;
+	std::string name;
+	Animation anim;
+
+	Entity() { life = 1; }
+
+	void settings(Animation &a, int X, int Y, float Angle = 0, int radius = 1)
+	{
+		x = X; y = Y; anim = a;
+		angle = Angle; R = radius;
+	}
+
+	virtual void update() {};
+
+	void draw(RenderWindow &window)
+	{
+		anim.sprite.setPosition(x, y);
+		anim.sprite.setRotation(angle + 90);
+		window.draw(anim.sprite);
+	}
+
+};
+
+class bullet : public  Entity 
+{
+public:
+	bullet()
+	{
+		name = "bullet";
+	}
+	void update()
+	{
+		int o, l;
+		dx = cos(angle*DEGTORAD) * 0.5;
+		dy = sin(angle*DEGTORAD) * 0.5;
+		x += dx;
+		y += dy;
+		o = x / 64;
+		l = y / 64;
+		if (x > 960 || x < 0 || y>576 || y < 0) life = 0;
+				if (Level1[l][o] != ' ') life = 0;
+	}
+};
 
 int main()
 {
 	RenderWindow window(VideoMode(960, 576), "Kursach game!");
 	Clock clock;
-	
-	Texture t;
+	Texture t, st, wood, bonus, enemyt, bullett;
 	t.loadFromFile("player.png");
-
-	Texture st;
 	st.loadFromFile("stone.png");
-
-	Texture wood;
 	wood.loadFromFile("wood.png");
-
-	Texture bonus;
 	bonus.loadFromFile("bonus.png");
-	
+	enemyt.loadFromFile("enemy.png");
+	bullett.loadFromFile("bullet.png");
+
+	Animation sbullet(bullett,0,0,32,32,1,1);
+
 	RectangleShape rectangle(Vector2f(64, 64));
-	
+
 	Sprite map;
 	float currentFrame = 0;
 
 	Sprite backgroung;
+	std::list<Entity*> entities;
 
 	PLAYER p(t);
-
+	int angle = 0;
 	while (window.isOpen())
 	{
-		float time = 20;
+		float time = 1;
 		Event event;
-					while (window.pollEvent(event))
-					{
-						if (event.type == sf::Event::Closed)
-						window.close();
-						//движение по сторонам.
-						if (Keyboard::isKeyPressed(Keyboard::A))
-							p.dx = -0.1;
-						if (Keyboard::isKeyPressed(Keyboard::D))
-							p.dx = 0.1;
-						if (Keyboard::isKeyPressed(Keyboard::W))
-							p.dy = -0.1;
-						if (Keyboard::isKeyPressed(Keyboard::S))
-							p.dy = 0.1;
-					}
-					p.update(time);
-				window.clear(Color::White);
-				
-				//загруззка фона
-				backgroung.setTexture(wood);
-				window.draw(backgroung);
+		while (window.pollEvent(event))
+		{
+			if (event.type == sf::Event::Closed)
+				window.close();
+			if (event.type == Event::KeyPressed)
+			{
+				if (event.key.code == Keyboard::Space)
+				{
+					bullet *b = new bullet();
+					b->settings(sbullet, p.rect.left+24, p.rect.top+24, angle, 10);
+					entities.push_back(b);
+				}
+			}
+		}
+		if (Keyboard::isKeyPressed(Keyboard::A))
+		{
+			p.dx = -0.1; angle = 180;
+		}
+		if (Keyboard::isKeyPressed(Keyboard::D))
+		{
+			p.dx = 0.1; angle = 0;
+		}
+		if (Keyboard::isKeyPressed(Keyboard::W))
+		{
+			p.dy = -0.1; angle = 270;
+		}
+		if (Keyboard::isKeyPressed(Keyboard::S))
+		{
+			p.dy = 0.1;; angle = 90;
+		}
+		if (Keyboard::isKeyPressed(Keyboard::LShift))
+		{
+			time = 3;
+		}
+		p.update(time);
+		window.clear(Color::White);
 
-				//прорисовка препядствий
-				for (int i = 0; i<H; i++)
-					for (int j = 0; j<15; j++)
-					{
-						if (Level1[i][j] == 'Z') map.setTexture(st);
+		//С„РѕРЅ
+		backgroung.setTexture(wood);
+		window.draw(backgroung);
 
-						if (Level1[i][j] == 'e')  map.setTexture(bonus);
+		//РїСЂРѕСЂРёСЃРѕРІРєР° РєР°СЂС‚Рё
+		for (int i = 0; i<H; i++)
+			for (int j = 0; j<15; j++)
+			{
+				if (Level1[i][j] == 'Z') map.setTexture(st);
 
-						if (Level1[i][j] == 'o')  map.setTexture(st);
+				if (Level1[i][j] == 'e')  map.setTexture(bonus);
 
-						if (Level1[i][j] == ' ') continue;
+				if (Level1[i][j] == 'o')  map.setTexture(st);
 
-						map.setPosition(j* 64 , i * 64);
-						window.draw(map);
-					}
+				if (Level1[i][j] == ' ') continue;
 
+				map.setPosition(j * 64, i * 64);
+				window.draw(map);
+			}
 
-			window.draw(p.sprite);
+		for (auto i = entities.begin(); i != entities.end();)
+		{
+			Entity *e = *i;
+			e->update();
+			e->anim.update();
+			if (e->life == false) { i = entities.erase(i); delete e; }
+			else i++;
+		}
+
+		for (auto i : entities) i->draw(window);
+
+		window.draw(p.sprite);
 		window.display();
 	}
 
