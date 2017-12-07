@@ -1,24 +1,25 @@
 ﻿  main.cpp
-c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(38): warning C4305: '=': truncation from 'double' to 'float'
-c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(50): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
-c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(65): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(66): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(71): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(73): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(116): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(122): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
-c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(141): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(142): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(166): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(167): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(170): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(171): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(214): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(214): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(221): warning C4305: '=': truncation from 'double' to 'float'
+c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(87): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(93): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(112): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(113): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(140): warning C4305: '=': truncation from 'double' to 'float'
+c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(152): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(167): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(168): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(173): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(175): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(211): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(212): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(224): warning C4305: '=': truncation from 'double' to 'float'
 c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(225): warning C4305: '=': truncation from 'double' to 'float'
-c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(229): warning C4305: '=': truncation from 'double' to 'float'
-c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(233): warning C4305: '=': truncation from 'double' to 'float'
-c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(258): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(249): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(300): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(300): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(307): warning C4305: '=': truncation from 'double' to 'float'
+c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(311): warning C4305: '=': truncation from 'double' to 'float'
+c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(315): warning C4305: '=': truncation from 'double' to 'float'
+c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(319): warning C4305: '=': truncation from 'double' to 'float'
+c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(355): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
   Kursach.vcxproj -> C:\Users\Роман\documents\visual studio 2015\Projects\Kursach\Debug\Kursach.exe
   Kursach.vcxproj -> C:\Users\Роман\documents\visual studio 2015\Projects\Kursach\Debug\Kursach.pdb (Partial PDB)
