@@ -12,12 +12,12 @@ int CW = 0;
 
 String Level1[H] = {
 	"ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ",
-	"Z             ZZeee    s   seZZe           eZZ     s     eeZZ        s    ZZ             Z",
+	"Z            vZZeee v  s   seZZe           eZZ     s     eeZZ        s    ZZ             Z",
 	"Z             ZZeee  s s s seZZ    s  s     ZZ     s     eeZZ        s s  ZZ             Z",
 	"Z             ZZsss  s s s seZZ    s  s     ZZ     sss   eeZZs    s  s s  ZZ             Z",
-	"Z             oZ  s  s s s s oZ    s  s     oZ             oZ     s  s s  oZ             Z",
+	"Z             ZZ  s  s s s s ZZ    s  s     ZZ             ZZ     s  s s  ZZ             Z",
 	"Z             ZZ  s  s s s s ZZ   ssssss    ZZ     sss   eeZZss   s ss sssZZ             Z",
-	"Z             ZZ  s  s s s s ZZ  seeeeees   ZZ     s     eeZZ     s s     ZZ             Z",
+	"Z             ZZ vs  s s s s ZZ  seeeeees   ZZ     s     eeZZ     s s     ZZ             Z",
 	"Z             ZZ     s   s   ZZe seeeeees  eZZ     s     eeZZ     s       ZZ             Z",
 	"ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ",
 };
@@ -83,8 +83,9 @@ public:
 	float dx, dy;		//скорость
 	FloatRect rect;		//загрузка текстури игрока (координат)
 	Sprite sprite;		//загрузка спрайта игрока
-	int life;			//живий чи н≥
+	bool life = 1;			//живий чи н≥
 	float currentFrame;	//поточний кадр игрока
+
 
 						//конструктор
 	PLAYER(Texture &image)
@@ -95,6 +96,7 @@ public:
 		currentFrame = 0;
 		rect.left = 70;
 		rect.top = 270;
+		life = 1;
 	}
 	void update(float time)
 	{
@@ -183,17 +185,72 @@ public:
 	{
 		x += dx;
 		y += dy;
-		if (Level1[int(y / 64)][int(x / 64)] != ' ') dx = dx*-1;
-		if (Level1[int(y / 64)][int(x / 64)] != ' ') dy = dy*-1;
+		if (Level1[int(y / 64)][int(x / 64)] != ' ') dx *= -1;
+		if (Level1[int(y / 64)][int(x / 64)] != ' ') dy *= -1;
 	}
 };
 
+
+//Функции обработки столкновений и прорисовки меню
 bool isCollide(Entity *a, Entity *b)
 {
 	return (b->x - a->x)*(b->x - a->x) +
 		(b->y - a->y)*(b->y - a->y) <
 		(a->R + b->R)*(a->R + b->R);
 }
+
+bool Playerenemy(Entity *a, PLAYER p)
+{
+	FloatRect rectenemy;
+	rectenemy = FloatRect(a->x, a->y, 32, 32);
+	return (p.rect.intersects(rectenemy));
+}
+
+void menu(RenderWindow & window) {
+	Texture menuTexture1, menuTexture2, menuTexture3, aboutTexture, menuBackground;
+	menuTexture1.loadFromFile("images/111.png");
+	menuTexture2.loadFromFile("images/222.png");
+	menuTexture3.loadFromFile("images/333.png");
+	aboutTexture.loadFromFile("images/about.png");
+	menuBackground.loadFromFile("images/Penguins.jpg");
+	Sprite menu1(menuTexture1), menu2(menuTexture2), menu3(menuTexture3), about(aboutTexture), menuBg(menuBackground);
+	bool isMenu = 1;
+	int menuNum = 0;
+	menu1.setPosition(410, 30);
+	menu2.setPosition(390, 90);
+	menu3.setPosition(430, 150);
+	menuBg.setPosition(0, 0);
+
+	//////////////////////////////МЕНЮ///////////////////
+	while (isMenu)
+	{
+		menu1.setColor(Color::White);
+		menu2.setColor(Color::White);
+		menu3.setColor(Color::White);
+		menuNum = 0;
+		window.clear(Color(129, 181, 221));
+
+		if (IntRect(410, 30, 300, 50).contains(Mouse::getPosition(window))) { menu1.setColor(Color::Blue); menuNum = 1; }
+		if (IntRect(390, 90, 300, 50).contains(Mouse::getPosition(window))) { menu2.setColor(Color::Blue); menuNum = 2; }
+		if (IntRect(430, 150, 300, 50).contains(Mouse::getPosition(window))) { menu3.setColor(Color::Blue); menuNum = 3; }
+
+		if (Mouse::isButtonPressed(Mouse::Left))
+		{
+			if (menuNum == 1) isMenu = false;//если нажали первую кнопку, то выходим из меню 
+			if (menuNum == 2) { window.draw(about); window.display(); while (!Keyboard::isKeyPressed(Keyboard::Escape)); }
+			if (menuNum == 3) { window.close(); isMenu = false; }
+
+		}
+
+		window.draw(menuBg);
+		window.draw(menu1);
+		window.draw(menu2);
+		window.draw(menu3);
+
+		window.display();
+	}
+}
+
 
 int main()
 {
@@ -202,50 +259,35 @@ int main()
 	Clock clock;
 	srand(time(0));
 	Texture t, st, wood, bonus, enemyt, bullett, wall, door;
-	t.loadFromFile("player.png");
-	st.loadFromFile("stone.png");
-	wall.loadFromFile("wall.png");
-	door.loadFromFile("door.png");
-	wood.loadFromFile("wood.png");
-	bonus.loadFromFile("bonus.png");
-	enemyt.loadFromFile("enemy.png");
-	bullett.loadFromFile("bullet.png");
-	FloatRect recte;
+	t.loadFromFile("images/player.png");
+	st.loadFromFile("images/stone.png");
+	wall.loadFromFile("images/wall.png");
+	door.loadFromFile("images/door.png");
+	wood.loadFromFile("images/wood.png");
+	bonus.loadFromFile("images/bonus.png");
+	enemyt.loadFromFile("images/enemy.png");
+	bullett.loadFromFile("images/bullet.png");
 
-	Animation sbullet(bullett, 0, 0, 32, 32, 1, 1);
-	Animation senemy(enemyt, 0, 0, 32, 32, 1, 1);
+	Animation sbullet(bullett, 0, 0, 32, 32, 1, 32);
+	Animation senemy(enemyt, 0, 0, 32, 32, 1, 32);
 	RectangleShape rectangle(Vector2f(64, 64));
-
 	Sprite map;
-	float currentFrame = 0;
-
 	Sprite backgroung;
-	int checkx = 0, checky = 0;
-	std::list<Entity*> entities;
-	//создание врагов
-	for (int i = 0; i < 5; i++)
-	{
-		checkx = rand() % 800 + 64;
-		checky = rand() % 476 + 64;
-		//	if (Level1[checkx / 64][checky / 64] != ' ') { checkx += 64; checky += 64; }
-
-		enemy *a = new enemy();
-		a->settings(senemy, checkx, checky, 270, 1);
-		entities.push_back(a);
-
-	}
-
-	PLAYER p(t);
+	float currentFrame = 0;
+	int cv = 0;
 	int angle = 0;
+	std::list<Entity*> entities;
+	PLAYER p(t);
 	while (window.isOpen())
 	{
 		float time = 1;
 		Event event;
+
+		//проверка на закрытие окна.
 		while (window.pollEvent(event))
 		{
 			if (event.type == sf::Event::Closed)
 				window.close();
-
 			if (event.type == Event::KeyPressed)
 			{
 				if (event.key.code == Keyboard::Space)
@@ -256,6 +298,7 @@ int main()
 				}
 			}
 		}
+		//движение персонажа
 		if (Keyboard::isKeyPressed(Keyboard::A))
 		{
 			p.dx = -0.1; angle = 180;
@@ -276,23 +319,13 @@ int main()
 		{
 			time = 3;
 		}
-
-		for (auto a : entities)
-			for (auto b : entities)
-				if (a->name == "enemy"&&b->name == "bullet")
-					if (isCollide(a, b))
-					{
-						a->life = false; b->life = false;
-					}
-
-		p.update(time);
+		
+		//начало прорисовки
 		window.clear(Color::White);
-
-		//фон
 		backgroung.setTexture(wood);
 		window.draw(backgroung);
 
-		//прорисовка карти
+		//прорисовка карти и инициализация врагов
 		for (int i = 0; i<H; i++)
 			for (int j = 0; j<15; j++)
 			{
@@ -300,9 +333,14 @@ int main()
 
 				if (Level1[i][j] == 'e')  map.setTexture(bonus);
 
-				if (Level1[i][j] == 'o')  map.setTexture(door);
+				if (Level1[i][j] == 'o')  map.setTexture(door); 
 
 				if (Level1[i][j] == 's') map.setTexture(st);
+
+				if (Level1[i][j] == 'v')
+				{
+					Level1[i][j] = ' '; enemy *a = new enemy(); a->settings(senemy, j * 64, i * 64, 270, 1); entities.push_back(a); cv++;
+				}
 
 				if (Level1[i][j] == ' ') continue;
 
@@ -310,6 +348,20 @@ int main()
 				window.draw(map);
 			}
 
+		//проверка на столкновения врагов с пулями и героя с врагами.
+		for (auto a : entities)
+			for (auto b : entities)
+			{
+				if (a->name == "enemy"&&b->name == "bullet")
+					if (isCollide(a, b))
+					{
+						a->life = false; b->life = false; cv--;
+					}
+
+				if (a->name == "enemy") if (Playerenemy(a, p)) p.sprite.setColor(Color::Red);
+			}
+		
+		//динамическое удаление пуль и врагов.
 		for (auto i = entities.begin(); i != entities.end();)
 		{
 			Entity *e = *i;
@@ -318,9 +370,14 @@ int main()
 			if (e->life == false) { i = entities.erase(i); delete e; }
 			else i++;
 		}
-
+		
+		//создание дверей если все враги убиты
+		if (cv == 0) Level1[4][14] = 'o';
+		//прорисовка всех врагов и пуль
 		for (auto i : entities) i->draw(window);
 
+		//функции оновление информации о персонаже.
+		p.update(time);
 		window.draw(p.sprite);
 		window.display();
 	}
