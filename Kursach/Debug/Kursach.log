@@ -21,5 +21,5 @@ c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.c
 c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(312): warning C4305: '=': truncation from 'double' to 'float'
 c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(316): warning C4305: '=': truncation from 'double' to 'float'
 c:\users\роман\documents\visual studio 2015\projects\kursach\kursach\main.cpp(347): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-  Kursach.vcxproj -> C:\Users\Роман\documents\visual studio 2015\Projects\Kursach\Debug\Kursach.exe
-  Kursach.vcxproj -> C:\Users\Роман\documents\visual studio 2015\Projects\Kursach\Debug\Kursach.pdb (Partial PDB)
+  Kursach.vcxproj -> C:\Users\Роман\Documents\Visual Studio 2015\Projects\Kursach\Debug\Kursach.exe
+  Kursach.vcxproj -> C:\Users\Роман\Documents\Visual Studio 2015\Projects\Kursach\Debug\Kursach.pdb (Partial PDB)

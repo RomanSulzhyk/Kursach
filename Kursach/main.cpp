@@ -212,13 +212,13 @@ void menu(RenderWindow & window) {
 	menuTexture2.loadFromFile("images/222.png");
 	menuTexture3.loadFromFile("images/333.png");
 	aboutTexture.loadFromFile("images/about.png");
-	menuBackground.loadFromFile("images/Penguins.jpg");
+	menuBackground.loadFromFile("images/menu.png");
 	Sprite menu1(menuTexture1), menu2(menuTexture2), menu3(menuTexture3), about(aboutTexture), menuBg(menuBackground);
 	bool isMenu = 1;
 	int menuNum = 0;
-	menu1.setPosition(410, 30);
-	menu2.setPosition(390, 90);
-	menu3.setPosition(430, 150);
+	menu1.setPosition(630, 30);
+	menu2.setPosition(575, 90);
+	menu3.setPosition(540, 150);
 	menuBg.setPosition(0, 0);
 
 	//////////////////////////////МЕНЮ///////////////////
@@ -230,9 +230,9 @@ void menu(RenderWindow & window) {
 		menuNum = 0;
 		window.clear(Color(129, 181, 221));
 
-		if (IntRect(410, 30, 300, 50).contains(Mouse::getPosition(window))) { menu1.setColor(Color::Blue); menuNum = 1; }
-		if (IntRect(390, 90, 300, 50).contains(Mouse::getPosition(window))) { menu2.setColor(Color::Blue); menuNum = 2; }
-		if (IntRect(430, 150, 300, 50).contains(Mouse::getPosition(window))) { menu3.setColor(Color::Blue); menuNum = 3; }
+		if (IntRect(630, 30, 300, 50).contains(Mouse::getPosition(window))) { menu1.setColor(Color::Black); menuNum = 1; }
+		if (IntRect(575, 90, 300, 50).contains(Mouse::getPosition(window))) { menu2.setColor(Color::Black); menuNum = 2; }
+		if (IntRect(540, 150, 300, 50).contains(Mouse::getPosition(window))) { menu3.setColor(Color::Black); menuNum = 3; }
 
 		if (Mouse::isButtonPressed(Mouse::Left))
 		{
