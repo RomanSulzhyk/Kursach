@@ -1,4 +1,5 @@
 ﻿#include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <list>
 #include <stdio.h>
 
@@ -12,13 +13,13 @@ int CW = 0;
 
 String Level1[H] = {
 	"ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ",
-	"Z            vZZeee v  s   seZZe           eZZ     s     eeZZ        s    ZZ             Z",
-	"Z             ZZeee  s s s seZZ    s  s     ZZ     s     eeZZ        s s  ZZ             Z",
-	"Z             ZZsss  s s s seZZ    s  s     ZZ     sss   eeZZs    s  s s  ZZ             Z",
-	"Z             ZZ  s  s s s s ZZ    s  s     ZZ             ZZ     s  s s  ZZ             Z",
-	"Z             ZZ  s  s s s s ZZ   ssssss    ZZ     sss   eeZZss   s ss sssZZ             Z",
-	"Z             ZZ vs  s s s s ZZ  seeeeees   ZZ     s     eeZZ     s s     ZZ             Z",
-	"Z             ZZ     s   s   ZZe seeeeees  eZZ     s     eeZZ     s       ZZ             Z",
+	"Z             ZZeee v  s   seZZe vvvvvv    eZZ     s  v  eeZZ        s    ZZ             Z",
+	"Z       vvv   ZZeee  s svs seZZ    s  s     ZZ     s     eeZZ      v s s  ZZ             Z",
+	"Z             ZZsss  svs s seZZ    s  s  v  ZZ     sss   eeZZs    s vs s  ZZ            ZZ",
+	"Z    v        ZZ  s  s s s s ZZ    s vs     ZZ             ZZ     sv s s  ZZ            ZZ",
+	"Z             ZZ  s  s svs s ZZ   ssssss v  ZZ     sss   eeZZss   s ss sssZZ            ZZ",
+	"Z             ZZ vs  s s s s ZZ  seeeeees   ZZ v   s     eeZZ     s s  v vZZ             Z",
+	"Z             ZZ     s   s   ZZe seeeeees  eZZ     s  v  eeZZ     s   v   ZZ             Z",
 	"ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ",
 };
 
@@ -168,7 +169,6 @@ public:
 		dy = sin(angle*DEGTORAD) * 0.5;
 		x += dx;
 		y += dy;
-		if (x > 960 || x < 0 || y>576 || y < 0) life = 0;
 		if (Level1[int(y / 64)][int(x / 64)] != ' ') life = 0;
 	}
 };
@@ -177,16 +177,18 @@ class enemy : public Entity {
 public:
 	enemy()
 	{
-		dx = 0.05;
-		dy = 0.05;
+		dx = dy = -0.5;
 		name = "enemy";
 	}
+
 	void update()
 	{
 		x += dx;
 		y += dy;
-		if (Level1[int(y / 64)][int(x / 64)] != ' ') dx *= -1;
-		if (Level1[int(y / 64)][int(x / 64)] != ' ') dy *= -1;
+		if (Level1[int((y + 16) / 64)][int((x + 16) / 64)] != ' ' || Level1[int((y - 16) / 64)][int((x - 16) / 64)] != ' ') 
+		{
+			dx *= -1; dy *= -1;
+		}
 	}
 };
 
@@ -258,6 +260,7 @@ int main()
 	menu(window);//вызов меню
 	Clock clock;
 	srand(time(0));
+	//загрузка всех текстур и спрайтов
 	Texture t, st, wood, bonus, enemyt, bullett, wall, door;
 	t.loadFromFile("images/player.png");
 	st.loadFromFile("images/stone.png");
@@ -276,6 +279,13 @@ int main()
 	float currentFrame = 0;
 	int cv = 0;
 	int angle = 0;
+
+	SoundBuffer buffer;
+	buffer.loadFromFile("music/MC.ogg");
+	Sound sound;
+	sound.setBuffer(buffer);
+	sound.play();
+
 	std::list<Entity*> entities;
 	PLAYER p(t);
 	while (window.isOpen())
@@ -283,22 +293,24 @@ int main()
 		float time = 1;
 		Event event;
 
-		//проверка на закрытие окна.
+		//проверка на закрытие окна и основной цикл програмы
 		while (window.pollEvent(event))
 		{
 			if (event.type == sf::Event::Closed)
 				window.close();
+			//создание выстрелов
 			if (event.type == Event::KeyPressed)
 			{
 				if (event.key.code == Keyboard::Space)
 				{
 					bullet *b = new bullet();
-					b->settings(sbullet, p.rect.left + 24, p.rect.top + 24, angle, 10);
+					b->settings(sbullet, p.rect.left + 24, p.rect.top + 24, angle, 16);
 					entities.push_back(b);
 				}
 			}
 		}
 		//движение персонажа
+
 		if (Keyboard::isKeyPressed(Keyboard::A))
 		{
 			p.dx = -0.1; angle = 180;
@@ -339,7 +351,7 @@ int main()
 
 				if (Level1[i][j] == 'v')
 				{
-					Level1[i][j] = ' '; enemy *a = new enemy(); a->settings(senemy, j * 64, i * 64, 270, 1); entities.push_back(a); cv++;
+					Level1[i][j] = ' '; enemy *a = new enemy(); a->settings(senemy, j * 64+16, i * 64+16, 270, 16); entities.push_back(a); cv++;
 				}
 
 				if (Level1[i][j] == ' ') continue;
