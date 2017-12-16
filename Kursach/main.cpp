@@ -2,6 +2,8 @@
 #include <SFML/Audio.hpp>
 #include <list>
 #include <stdio.h>
+#include <iostream>
+#include <sstream>
 
 using namespace sf;
 
@@ -103,7 +105,7 @@ public:
 	{
 		rect.left += dx * time;
 		Collision(0);
-		rect.top += dy*time;
+		rect.top += dy * time;
 		Collision(1);
 
 		currentFrame += 0.01*time;
@@ -259,7 +261,10 @@ int main()
 	RenderWindow window(VideoMode(960, 576), "Kursach game!");
 	menu(window);//вызов меню
 	Clock clock;
+	Clock gameTimeClock;//переменная игрового времени, будем здесь хранить время игры 
+	int gameTime = 0;//объявили игровое время, инициализировали.
 	srand(time(0));
+
 	//загрузка всех текстур и спрайтов
 	Texture t, st, wood, bonus, enemyt, bullett, wall, door;
 	t.loadFromFile("images/player.png");
@@ -288,10 +293,19 @@ int main()
 
 	std::list<Entity*> entities;
 	PLAYER p(t);
+
+	Font font;
+	font.loadFromFile("fontgame.ttf");
+	Text text("", font, 40);
+
 	while (window.isOpen())
 	{
 		float time = 1;
 		Event event;
+		float gtime = clock.getElapsedTime().asMicroseconds();
+		if (p.life) gameTime = gameTimeClock.getElapsedTime().asSeconds();//игровое время в секундах идёт вперед, пока жив игрок, перезагружать как time его не надо. оно не обновляет логику игры
+		clock.restart();
+		gtime = gtime / 800;
 
 		//проверка на закрытие окна и основной цикл програмы
 		while (window.pollEvent(event))
@@ -309,87 +323,109 @@ int main()
 				}
 			}
 		}
-		//движение персонажа
 
-		if (Keyboard::isKeyPressed(Keyboard::A))
+		if (p.life == 1)
 		{
-			p.dx = -0.1; angle = 180;
-		}
-		if (Keyboard::isKeyPressed(Keyboard::D))
-		{
-			p.dx = 0.1; angle = 0;
-		}
-		if (Keyboard::isKeyPressed(Keyboard::W))
-		{
-			p.dy = -0.1; angle = 270;
-		}
-		if (Keyboard::isKeyPressed(Keyboard::S))
-		{
-			p.dy = 0.1;; angle = 90;
-		}
-		if (Keyboard::isKeyPressed(Keyboard::LShift))
-		{
-			time = 3;
-		}
-		
-		//начало прорисовки
-		window.clear(Color::White);
-		backgroung.setTexture(wood);
-		window.draw(backgroung);
+			//движение персонажа
 
-		//прорисовка карти и инициализация врагов
-		for (int i = 0; i<H; i++)
-			for (int j = 0; j<15; j++)
+			if (Keyboard::isKeyPressed(Keyboard::A))
 			{
-				if (Level1[i][j] == 'Z') map.setTexture(wall);
-
-				if (Level1[i][j] == 'e')  map.setTexture(bonus);
-
-				if (Level1[i][j] == 'o')  map.setTexture(door); 
-
-				if (Level1[i][j] == 's') map.setTexture(st);
-
-				if (Level1[i][j] == 'v')
-				{
-					Level1[i][j] = ' '; enemy *a = new enemy(); a->settings(senemy, j * 64+16, i * 64+16, 270, 16); entities.push_back(a); cv++;
-				}
-
-				if (Level1[i][j] == ' ') continue;
-
-				map.setPosition(j * 64, i * 64);
-				window.draw(map);
+				p.dx = -0.1; angle = 180;
+			}
+			if (Keyboard::isKeyPressed(Keyboard::D))
+			{
+				p.dx = 0.1; angle = 0;
+			}
+			if (Keyboard::isKeyPressed(Keyboard::W))
+			{
+				p.dy = -0.1; angle = 270;
+			}
+			if (Keyboard::isKeyPressed(Keyboard::S))
+			{
+				p.dy = 0.1;; angle = 90;
+			}
+			if (Keyboard::isKeyPressed(Keyboard::LShift))
+			{
+				time = 3;
 			}
 
-		//проверка на столкновения врагов с пулями и героя с врагами.
-		for (auto a : entities)
-			for (auto b : entities)
-			{
-				if (a->name == "enemy"&&b->name == "bullet")
-					if (isCollide(a, b))
+			//начало прорисовки
+			window.clear(Color::White);
+			backgroung.setTexture(wood);
+			window.draw(backgroung);
+
+			//прорисовка карти и инициализация врагов
+			for (int i = 0; i < H; i++)
+				for (int j = 0; j < 15; j++)
+				{
+					if (Level1[i][j] == 'Z') map.setTexture(wall);
+
+					if (Level1[i][j] == 'e')  map.setTexture(bonus);
+
+					if (Level1[i][j] == 'o')  map.setTexture(door);
+
+					if (Level1[i][j] == 's') map.setTexture(st);
+
+					if (Level1[i][j] == 'v')
 					{
-						a->life = false; b->life = false; cv--;
+						Level1[i][j] = ' '; enemy *a = new enemy(); a->settings(senemy, j * 64 + 16, i * 64 + 16, 270, 16); entities.push_back(a); cv++;
 					}
 
-				if (a->name == "enemy") if (Playerenemy(a, p)) p.sprite.setColor(Color::Red);
-			}
-		
-		//динамическое удаление пуль и врагов.
-		for (auto i = entities.begin(); i != entities.end();)
-		{
-			Entity *e = *i;
-			e->update();
-			e->anim.update();
-			if (e->life == false) { i = entities.erase(i); delete e; }
-			else i++;
-		}
-		
-		//создание дверей если все враги убиты
-		if (cv == 0) Level1[4][14] = 'o';
-		//прорисовка всех врагов и пуль
-		for (auto i : entities) i->draw(window);
+					if (Level1[i][j] == ' ') continue;
 
-		//функции оновление информации о персонаже.
-		p.update(time);
+					map.setPosition(j * 64, i * 64);
+					window.draw(map);
+				}
+
+			//проверка на столкновения врагов с пулями и героя с врагами.
+			for (auto a : entities)
+				for (auto b : entities)
+				{
+					if (a->name == "enemy"&&b->name == "bullet")
+						if (isCollide(a, b))
+						{
+							a->life = false; b->life = false; cv--;
+						}
+
+					if (a->name == "enemy") if (Playerenemy(a, p)) {
+						p.sprite.setColor(Color::Red); p.life = 0;
+					}
+				}
+
+			//динамическое удаление пуль и врагов.
+			for (auto i = entities.begin(); i != entities.end();)
+			{
+				Entity *e = *i;
+				e->update();
+				e->anim.update();
+				if (e->life == false) { i = entities.erase(i); delete e; }
+				else i++;
+			}
+
+			//создание дверей если все враги убиты
+			if (cv == 0) Level1[4][14] = 'o';
+			//прорисовка всех врагов и пуль
+			for (auto i : entities) i->draw(window);
+
+			//функции оновление информации о персонаже.
+			p.update(time);
+			std::ostringstream playerHealthString, gameTimeString;    // объявили переменную здоровья и времени
+			gameTimeString << gameTime;		//формируем строку
+			text.setString("Time: " + gameTimeString.str());//задаем строку тексту и вызываем сформированную выше строку методом .str()
+			text.setFillColor(Color::Red);
+			text.setPosition(64, 20);//задаем позицию текста, отступая от центра камеры
+			window.draw(text);//рисую этот текст
+		}
+		if (p.life==0) {
+			if (Keyboard::isKeyPressed(Keyboard::Escape))
+				window.close();
+			text.setString("Game Over, press esc to exit");//задаем строку тексту и вызываем сформированную выше строку методом .str()
+			text.setFillColor(Color::Red);
+			text.setPosition(64, 200);//задаем позицию текста, отступая от центра камеры
+			window.draw(text);//рисую этот текст
+			sound.stop();
+		}
+
 		window.draw(p.sprite);
 		window.display();
 	}
